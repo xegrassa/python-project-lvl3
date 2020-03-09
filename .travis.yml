@@ -1,6 +1,6 @@
 language: python
 python:
-  - "3.8"
+  - "3.6.8"
 install:
   - python -m pip install poetry
   - python -m pip install flake8
