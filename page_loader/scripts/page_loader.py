@@ -11,7 +11,7 @@ def get_html(URL):
 
 
 def gen_file_name(URL):
-    parts_file_name = re.findall('[^\W]+', URL)
+    parts_file_name = re.findall(r'[^\W]+', URL)
     file_name = '-'.join(parts_file_name[1:]) + '.html'
     return file_name
 

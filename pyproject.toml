@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "egrassa-page-loader"
-version = "0.1.0"
+version = "0.1.1"
 description = "Programm for load html page to folder and open page from folder"
 authors = ["egrassa <bacek90@mail.ru>"]
 packages = [
