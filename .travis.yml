@@ -7,4 +7,6 @@ install:
   - python -m pip install -U pytest
   - python -m pip install coverage
   - python -m pip install pytest-cov
-
+script:
+  - make lint
+  - make test
