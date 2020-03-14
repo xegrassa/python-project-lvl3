@@ -8,5 +8,6 @@ install:
   - python -m pip install coverage
   - python -m pip install pytest-cov
 script:
+  - make install
   - make lint
   - make test
