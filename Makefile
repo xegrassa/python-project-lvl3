@@ -9,7 +9,7 @@ lint:
 	poetry run flake8 page_loader
 
 test:
-	poetry run pytest
+	poetry run pytest --cov=tests
 
 push:
 	git add -A
