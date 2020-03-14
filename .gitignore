@@ -1,6 +1,7 @@
 .venv
 .python-version
 .html
+.coverage
 *egg-info
 dist
 __pycache__
