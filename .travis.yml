@@ -1,4 +1,7 @@
 language: python
+env:
+  global:
+    - CC_TEST_REPORTER_ID=377f431bc8679f70ddc228cc99dff7617fe06d6ee5906a9bad32b426b4f6072b
 python:
   - "3.8.0"
 install:
