@@ -12,6 +12,9 @@ repository = "https://github.com/xegrassa/python-project-lvl2"
 python = "^3.8"
 requests = "^2.23.0"
 argparse = "^1.4.0"
+bs4 = "^0.0.1"
+lxml = "^4.5.0"
+Pillow = "^7.0.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.7"
