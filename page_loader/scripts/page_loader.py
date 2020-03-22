@@ -3,6 +3,8 @@ import os
 import os.path
 import requests
 import re
+import urllib.parse
+import sys
 from bs4 import BeautifulSoup
 
 
@@ -11,7 +13,7 @@ def get_html(URL):
     return r.text
 
 
-def gen_file_name(URL):
+def gen_name_file(URL):
     parts_file_name = re.findall(r'[^\W]+', URL)
     file_name = '-'.join(parts_file_name[1:])
     return file_name
@@ -35,33 +37,29 @@ def main():
 
     URL = args.URL
     HTML = get_html(URL)
-    PATH_FILE = os.path.join(args.output, gen_file_name(URL))
+    PATH_DIR = args.output
+    PATH_FILE_HTML = os.path.join(PATH_DIR, gen_name_file(URL) + '.html')
+    PATH_DIR_FILES = os.path.join(PATH_DIR, gen_name_file(URL) + '_files')
     soup = BeautifulSoup(HTML, "lxml")
+    try:
+        os.makedirs(PATH_DIR_FILES)
+    except FileExistsError:
+        print('URL was downloaded earlier')
+        # sys.exit()
 
-    with open(PATH_FILE + '.html', 'w', encoding='utf-8') as file:
-        file.write(HTML)
+    for tag in soup.find_all(['img', 'link', 'script'], src=True):
+        split_url = urllib.parse.urlsplit(tag['src'])
+        if split_url.scheme or not tag['src']:
+            continue
+        file_name, file_extension = os.path.splitext(split_url.netloc + split_url.path)
+        data_local_resource = requests.get(urllib.parse.urljoin(URL, tag['src'])).text
+        path_local_file = os.path.join(PATH_DIR_FILES, gen_name_file(file_name) + file_extension)
+        with open(path_local_file, 'w') as file:
+            file.write(data_local_resource)
+        tag['src'] = os.path.join(gen_name_file(URL) + '_files', gen_name_file(file_name) + file_extension)
 
-
-    if not os.path.exists(PATH_FILE + '_files'):
-        os.mkdir(PATH_FILE + '_files')
-
-    # print(html)
-    print(requests.get('https://ru.hexlet.io/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js').text)
-
-    for i in soup.find_all(['img', 'link', 'script'], src=True):
-        pass
-
-        # print(i['src'])
-        # try:
-        # f = open(PATH_FILE + '_files/' + gen_file_name(i['src']), 'wb')
-        #
-        # img = download_src(i['src'])
-        # print(type(img))
-        # f.write(img)
-        # f.close()
-
-        # except:
-        #     pass
+    with open(PATH_FILE_HTML, 'w', encoding='utf-8') as file:
+        file.write(str(soup))
 
 
 if __name__ == '__main__':
