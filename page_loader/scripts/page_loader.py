@@ -15,7 +15,7 @@ def get_html(URL):
 
 def gen_name_file(URL):
     parts_file_name = re.findall(r'[^\W]+', URL)
-    file_name = '-'.join(parts_file_name[1:])
+    file_name = '-'.join(parts_file_name)
     return file_name
 
 
@@ -34,19 +34,16 @@ def main():
                         help='path to download page',
                         default=os.getcwd())
     args = parser.parse_args()
-
     URL = args.URL
     HTML = get_html(URL)
     PATH_DIR = args.output
-    PATH_FILE_HTML = os.path.join(PATH_DIR, gen_name_file(URL) + '.html')
-    PATH_DIR_FILES = os.path.join(PATH_DIR, gen_name_file(URL) + '_files')
+    PATH_FILE_HTML = os.path.join(PATH_DIR, gen_name_file(os.path.split(URL)[1]) + '.html')
+    PATH_DIR_FILES = os.path.join(PATH_DIR, gen_name_file(os.path.split(URL)[1]) + '_files')
     soup = BeautifulSoup(HTML, "lxml")
     try:
         os.makedirs(PATH_DIR_FILES)
     except FileExistsError:
         print('URL was downloaded earlier')
-        # sys.exit()
-
     for tag in soup.find_all(['img', 'link', 'script'], src=True):
         split_url = urllib.parse.urlsplit(tag['src'])
         if split_url.scheme or not tag['src']:
@@ -56,8 +53,8 @@ def main():
         path_local_file = os.path.join(PATH_DIR_FILES, gen_name_file(file_name) + file_extension)
         with open(path_local_file, 'w') as file:
             file.write(data_local_resource)
-        tag['src'] = os.path.join(gen_name_file(URL) + '_files', gen_name_file(file_name) + file_extension)
-
+        tag['src'] = os.path.join(gen_name_file(os.path.split(URL)[1]) + '_files',
+                                  gen_name_file(file_name) + file_extension)
     with open(PATH_FILE_HTML, 'w', encoding='utf-8') as file:
         file.write(str(soup))
 
