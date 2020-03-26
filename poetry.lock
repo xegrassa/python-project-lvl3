@@ -120,6 +120,14 @@ version = "2.9"
 
 [[package]]
 category = "main"
+description = "A logging module for Python"
+name = "logging"
+optional = false
+python-versions = "*"
+version = "0.4.9.6"
+
+[[package]]
+category = "main"
 description = "Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API."
 name = "lxml"
 optional = false
@@ -304,7 +312,7 @@ python-versions = "*"
 version = "0.1.8"
 
 [metadata]
-content-hash = "96b61090a329487c3bfe0478cf821e68174678979dfe829e79840320140a9d17"
+content-hash = "2fa8ee4fce0cfe6921861022731a3505c15368eab93f6cfadff8758e55b4a3a8"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -385,6 +393,9 @@ flake8 = [
 idna = [
     {file = "idna-2.9-py2.py3-none-any.whl", hash = "sha256:a068a21ceac8a4d63dbfd964670474107f541babbd2250d61922f029858365fa"},
     {file = "idna-2.9.tar.gz", hash = "sha256:7588d1c14ae4c77d74036e8c22ff447b26d0fde8f007354fd48a7814db15b7cb"},
+]
+logging = [
+    {file = "logging-0.4.9.6.tar.gz", hash = "sha256:26f6b50773f085042d301085bd1bf5d9f3735704db9f37c1ce6d8b85c38f2417"},
 ]
 lxml = [
     {file = "lxml-4.5.0-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:0701f7965903a1c3f6f09328c1278ac0eee8f56f244e66af79cb224b7ef3801c"},
