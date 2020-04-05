@@ -19,3 +19,4 @@ def configure_logger_verbosity(logger, verbosity):
         logger.setLevel(level=logging.WARNING)
     else:
         logger.disabled = True
+    return logger
