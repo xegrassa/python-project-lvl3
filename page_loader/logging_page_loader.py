@@ -2,7 +2,7 @@ import logging
 
 
 def get_logger():
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger('page_loader')
     handler = logging.StreamHandler()
     format = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(format)
