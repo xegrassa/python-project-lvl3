@@ -28,11 +28,9 @@ def main():
     logger.debug(f'URL: {URL}')
     logger.debug(f'Path to DIR: {PATH_DIR}')
     logger.debug(f'Path to DIR_files: {PATH_DIR_FILES}')
-
     if not is_valid_dir(PATH_DIR):
         sys.exit(1)
     create_dir(PATH_DIR_FILES)
-
     HTML, HTTP_RESPONSE = get_html(URL)
     if not is_valid_status(HTTP_RESPONSE):
         sys.exit(1)
@@ -52,7 +50,7 @@ def main():
         path_local_file = os.path.join(PATH_DIR_FILES, gen_name_file(file_name) + file_extension)
         with open(path_local_file, 'w') as file:
             file.write(get_data(url_data))
-            logger.debug(f"Write Data from {tag['src']} to {path_local_file}")
+        logger.debug(f"Write Data from {tag['src']} to {path_local_file}")
         tag['src'] = os.path.join(gen_name_file(os.path.split(URL)[1]) + '_files',
                                   gen_name_file(file_name) + file_extension)
     with open(PATH_FILE_HTML, 'w', encoding='utf-8') as file:
