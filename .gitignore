@@ -1,4 +1,6 @@
 .venv
+trash
+.idea
 .python-version
 .html
 .coverage
