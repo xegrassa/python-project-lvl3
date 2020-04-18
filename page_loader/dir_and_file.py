@@ -29,3 +29,8 @@ def create_dir(path_dir):
         logger.info(f'"{path_dir}" - created')
     except FileExistsError:
         logger.warning(f'Directory "{path_dir}" was created earlier')
+
+
+def write_to_file(path, data=''):
+    with open(path, 'w', encoding='utf-8') as file:
+        file.write(data)
