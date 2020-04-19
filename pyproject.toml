@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "egrassa-page-loader"
-version = "0.1.1"
+version = "0.2.0"
 description = "Programm for load html page to folder and open page from folder"
 authors = ["egrassa <bacek90@mail.ru>"]
 packages = [
@@ -24,7 +24,6 @@ coverage = "^4.5"
 pytest-cov = "^2.8"
 
 [tool.poetry.scripts]
-#page-loader = "page_loader.page_loader:main"
 page-loader = "page_loader.scripts.page_loader:main"
 
 [build-system]

@@ -1,5 +1,6 @@
-from page_loader.scripts.page_loader import gen_name_file, is_valid_dir, create_dir
+from page_loader.scripts.page_loader import gen_name, is_valid_dir, create_dir
 from page_loader.work_to_http import is_valid_status, get_html, get_data
+from page_loader.work_to_html import is_local_link, get_local_links, change_link
 import logging
 import pytest
 from tempfile import TemporaryDirectory
@@ -25,14 +26,16 @@ with open('tests/fixtures/sites', 'r') as f:
 logger.debug(f'Pair: (Site / Correct name): {SITES}')
 logger.debug(f'URLs: : {URLS}')
 
-def test_get_html():
-    pass
+
+@pytest.mark.parametrize('url', URLS)
+def test_get_html(url):
+    assert len(get_data(url)) >= 1
 
 
 @pytest.mark.parametrize('url, correct_name', SITES)
-def test_gen_name_file(url, correct_name):
-    logger.debug(f'TEST gen_name_file:  URL= {url},  gen_name= {gen_name_file(url)}')
-    assert gen_name_file(url) == correct_name
+def test_gen_name(url, correct_name):
+    logger.debug(f'TEST gen_name_file:  URL= {url},  gen_name= {gen_name(url)}')
+    assert gen_name(url) == correct_name
 
 
 def test_is_valid_dir_True():
@@ -72,3 +75,7 @@ def test_get_html(url):
 @pytest.mark.parametrize('url', URLS)
 def test_get_data(url):
     assert len(get_data(url)) >= 1
+
+
+def test_is_local_link():
+    assert is_local_link('/assets/application.js') == True
