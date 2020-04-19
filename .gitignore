@@ -1,4 +1,3 @@
-*.log
 .venv
 trash
 .idea
