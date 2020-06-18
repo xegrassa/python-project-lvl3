@@ -13,11 +13,11 @@ page-loader [-h] [--output OUTPUT] [--verbose] URL
 
 optional arguments:
 
-  -h, --help       show this help message and exit
+    -h, --help       show this help message and exit
   
-  --output OUTPUT  path to download page
+    --output OUTPUT  path to download page
   
-  --verbose, -v
+    --verbose, -v
 
 
 
