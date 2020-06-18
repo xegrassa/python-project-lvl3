@@ -12,8 +12,11 @@ pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/
 page-loader [-h] [--output OUTPUT] [--verbose] URL
 
 optional arguments:
+
   -h, --help       show this help message and exit
+  
   --output OUTPUT  path to download page
+  
   --verbose, -v
 
 
