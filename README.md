@@ -3,14 +3,13 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/41a05982a3a12d259ab0/test_coverage)](https://codeclimate.com/github/xegrassa/python-project-lvl3/test_coverage)
 
 Description
-The utility for finding differences in configuration files.
-
-Support: json, yaml, ini
+Еще не придумал описание
 
 Install
-pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ egrassa-gendiff
+pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ egrassa-page-loader
 
-usage: page-loader [-h] [--output OUTPUT] [--verbose] URL
+Usage
+page-loader [-h] [--output OUTPUT] [--verbose] URL
 
 optional arguments:
   -h, --help       show this help message and exit
