@@ -9,7 +9,8 @@
     pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ egrassa-page-loader
 
 ### Usage
-page-loader [-h] [--output OUTPUT] [--verbose] URL
+    page-loader [-h] [--output OUTPUT] [--verbose] URL
+
 
     optional arguments:
 
