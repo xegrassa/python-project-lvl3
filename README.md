@@ -2,13 +2,13 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/41a05982a3a12d259ab0/maintainability)](https://codeclimate.com/github/xegrassa/python-project-lvl3/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/41a05982a3a12d259ab0/test_coverage)](https://codeclimate.com/github/xegrassa/python-project-lvl3/test_coverage)
 
-Description
+## Description
 Еще не придумал описание
 
-Install
+### Install
 pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ egrassa-page-loader
 
-Usage
+### Usage
 page-loader [-h] [--output OUTPUT] [--verbose] URL
 
 optional arguments:
