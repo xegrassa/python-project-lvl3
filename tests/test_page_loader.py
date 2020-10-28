@@ -1,30 +1,16 @@
-from page_loader.scripts.page_loader import gen_name, is_valid_dir, create_dir
-from page_loader.work_to_http import is_valid_status, get_html, get_data
-from page_loader.work_to_html import is_local_link, get_local_links, change_link
-import logging
-import pytest
-from tempfile import TemporaryDirectory
 import os
 import os.path
-import stat
+from tempfile import TemporaryDirectory
 
-logger = logging.getLogger(__name__)
-handler = logging.FileHandler('tests/logs/test.log', mode='a')
-format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(format)
-handler.setLevel(logging.DEBUG)
-logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
+import pytest
+from page_loader import create_dir, gen_name
+from page_loader.network import is_local_link,get_data, get_html, is_valid_status
 
-SITES = []
+SITES = [('hexlet.io/courses', 'hexlet-io-courses'),
+         ('e1.ru', 'e1-ru')]
 URLS = ['http://e1.ru',
         'http://avito.ru',
         'https://hexlet.io/courses']
-with open('tests/fixtures/sites', 'r') as f:
-    for i in f:
-        SITES.append(i.split())
-logger.debug(f'Pair: (Site / Correct name): {SITES}')
-logger.debug(f'URLs: : {URLS}')
 
 
 @pytest.mark.parametrize('url', URLS)
@@ -34,19 +20,7 @@ def test_get_html(url):
 
 @pytest.mark.parametrize('url, correct_name', SITES)
 def test_gen_name(url, correct_name):
-    logger.debug(f'TEST gen_name_file:  URL= {url},  gen_name= {gen_name(url)}')
     assert gen_name(url) == correct_name
-
-
-def test_is_valid_dir_True():
-    with TemporaryDirectory() as path_temp_dir:
-        assert is_valid_dir(path_temp_dir) == True
-
-
-def test_is_valid_dir_False():
-    with TemporaryDirectory() as path_temp_dir:
-        os.chmod(path_temp_dir, stat.S_ENFMT)
-        assert is_valid_dir(path_temp_dir) == False
 
 
 def test_create_dir():
