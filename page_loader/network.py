@@ -1,49 +1,17 @@
 import logging
-import os.path
-import urllib.error
-import urllib.parse
+import os
+import urllib
 from typing import Tuple, List, Union
 
 import requests
 from bs4 import BeautifulSoup
 from progress.bar import Bar
 
-# from page_loader.storage import gen_name, write_to_file
-from storage import convert_url_to_name, write_to_file
+from page_loader.storage import convert_url_to_name, write_to_file
 
 SCRIPT = 'script'
 LINK = 'link'
 IMG = 'img'
-
-
-def get_data(url):
-    r = requests.get(url)
-    r.raise_for_status()
-    return r.content
-
-
-def has_local_link(tag):
-    link = tag.get('href') if tag.name == LINK else tag.get('src')
-    try:
-        if link[0] == '/' and link[1] != '/':
-            return True
-    except:
-        pass
-    return False
-
-
-def get_link(tag):
-    if tag.name == LINK:
-        return tag['href']
-    else:
-        return tag['src']
-
-
-def set_link(tag, link):
-    if tag.name == LINK:
-        tag['href'] = link
-    else:
-        tag['src'] = link
 
 
 def change_links(html, tags: Union[str, List[str]] = IMG, preffix_dir='', ):
@@ -90,6 +58,36 @@ def download(urls, path=os.getcwd, progress=False):
             logger.info(f'Url: {url}. Download')
     if progress:
         bar.finish()
+
+
+def get_data(url):
+    r = requests.get(url)
+    r.raise_for_status()
+    return r.content
+
+
+def get_link(tag):
+    if tag.name == LINK:
+        return tag['href']
+    else:
+        return tag['src']
+
+
+def has_local_link(tag):
+    link = tag.get('href') if tag.name == LINK else tag.get('src')
+    try:
+        if link[0] == '/' and link[1] != '/':
+            return True
+    except:
+        pass
+    return False
+
+
+def set_link(tag, link):
+    if tag.name == LINK:
+        tag['href'] = link
+    else:
+        tag['src'] = link
 
 
 def save_html(path_dir, url, verbosity_level):

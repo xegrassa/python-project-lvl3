@@ -3,16 +3,10 @@ import sys
 
 import requests
 
-# from page_loader.cli import get_args
-# from page_loader.Logging import configure_logger
-# from page_loader.network import save_html
-# from page_loader.storage import prepare_directory
-
-
-from cli import get_args
-from Logging import configure_logger
-from network import save_html
-from storage import prepare_directory
+from page_loader.cli import get_args
+from page_loader.logging import configure_logger
+from page_loader.network import save_html
+from page_loader.storage import prepare_directory
 
 
 def main():
