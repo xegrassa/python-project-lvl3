@@ -1,0 +1,13 @@
+.venv
+trash
+.idea
+.python-version
+.html
+.coverage
+*egg-info
+dist
+__pycache__
+.log
+RUNNER.py
+ZZZXXX
+poetry.lock

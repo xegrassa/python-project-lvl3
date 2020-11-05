@@ -74,8 +74,8 @@ def get_link(tag):
 
 
 def has_local_link(tag):
-    link = tag.get('href') if tag.name == LINK else tag.get('src')
     try:
+        link = tag.get('href') if tag.name == LINK else tag.get('src')
         if link[0] == '/' and link[1] != '/':
             return True
     except:
@@ -90,11 +90,11 @@ def set_link(tag, link):
         tag['src'] = link
 
 
-def save_html(path_dir, url, verbosity_level):
-    path_dir = path_dir if isinstance(path_dir, str) else path_dir()
+def save_html(dir_path, url, verbosity_level):
+    dir_path = dir_path if isinstance(dir_path, str) else dir_path()
     dir_files_name = convert_url_to_name(url) + '_files'
     html_name = convert_url_to_name(url) + '.html'
-    html_path = os.path.join(path_dir, html_name)
+    html_path = os.path.join(dir_path, html_name)
     logger = logging.getLogger('page_loader')
     logger.info(f'Download: {url}')
     html = get_data(url)
@@ -105,7 +105,7 @@ def save_html(path_dir, url, verbosity_level):
     logger.info('HTML changed')
     pairs_url_link = [(url, link) for link in local_links]
     download_urls = list(map(combine_url_link, pairs_url_link))
-    dir_files_path = os.path.join(path_dir, dir_files_name)
+    dir_files_path = os.path.join(dir_path, dir_files_name)
     if verbosity_level == 0:
         download(download_urls, path=dir_files_path, progress=True)
     else:
