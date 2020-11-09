@@ -4,7 +4,7 @@ import urllib
 from typing import Tuple, List, Union
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 from progress.bar import Bar
 
 from page_loader.storage import convert_url_to_name, write_to_file
@@ -66,14 +66,14 @@ def get_data(url):
     return r.content
 
 
-def get_link(tag):
+def get_link(tag: Tag):
     if tag.name == LINK:
         return tag['href']
     else:
         return tag['src']
 
 
-def has_local_link(tag):
+def has_local_link(tag: Tag) -> bool:
     try:
         link = tag.get('href') if tag.name == LINK else tag.get('src')
         if link[0] == '/' and link[1] != '/':
@@ -83,18 +83,18 @@ def has_local_link(tag):
     return False
 
 
-def set_link(tag, link):
+def set_link(tag: Tag, link: str):
     if tag.name == LINK:
         tag['href'] = link
     else:
         tag['src'] = link
 
 
-def save_html(dir_path, url, verbosity_level):
-    dir_path = dir_path if isinstance(dir_path, str) else dir_path()
+def save_html(output_dir, url, verbosity_level):
+    output_dir = output_dir if isinstance(output_dir, str) else output_dir()
     dir_files_name = convert_url_to_name(url) + '_files'
     html_name = convert_url_to_name(url) + '.html'
-    html_path = os.path.join(dir_path, html_name)
+    html_path = os.path.join(output_dir, html_name)
     logger = logging.getLogger('page_loader')
     logger.info(f'Download: {url}')
     html = get_data(url)
@@ -105,7 +105,7 @@ def save_html(dir_path, url, verbosity_level):
     logger.info('HTML changed')
     pairs_url_link = [(url, link) for link in local_links]
     download_urls = list(map(combine_url_link, pairs_url_link))
-    dir_files_path = os.path.join(dir_path, dir_files_name)
+    dir_files_path = os.path.join(output_dir, dir_files_name)
     if verbosity_level == 0:
         download(download_urls, path=dir_files_path, progress=True)
     else:

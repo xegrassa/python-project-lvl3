@@ -11,17 +11,17 @@ from page_loader.storage import prepare_directory
 
 def main():
     args = get_args()
-    url, path_dir, verbosity_level = args.URL, args.output, args.verbose
+    url, output_dir, verbosity_level = args.URL, args.output, args.verbose
     configure_logger(verbosity_level)
     logger = logging.getLogger('page_loader')
-    logger.debug(f'{url}, {path_dir}, {verbosity_level}')
+    logger.debug(f'{url}, {output_dir}, {verbosity_level}')
     try:
-        prepare_directory(path_dir, url)
+        prepare_directory(output_dir, url)
     except OSError as e:
         logger.critical(e)
         sys.exit(1)
     try:
-        save_html(path_dir, url, verbosity_level)
+        save_html(output_dir, url, verbosity_level)
     except requests.exceptions.HTTPError as e:
         logger.critical(e)
         sys.exit(1)
