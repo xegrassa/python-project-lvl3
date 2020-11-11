@@ -75,7 +75,7 @@ def get_link(tag: Tag):
 
 def has_local_link(tag: Tag) -> bool:
     try:
-        link = tag.get('href') if tag.name == LINK else tag.get('src')
+        link = get_link(tag)
         if link[0] == '/' and link[1] != '/':
             return True
     except:
