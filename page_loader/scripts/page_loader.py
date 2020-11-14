@@ -4,7 +4,7 @@ import sys
 import requests
 
 from page_loader.cli import get_args
-from page_loader.logging import configure_logger
+from page_loader.logger import configure_logger
 from page_loader.network import save_html
 from page_loader.storage import prepare_directory
 

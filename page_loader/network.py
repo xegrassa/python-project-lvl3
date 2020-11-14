@@ -14,7 +14,15 @@ LINK = 'link'
 IMG = 'img'
 
 
-def change_links(html, tags: Union[str, List[str]] = IMG, preffix_dir='', ):
+def find_tags_with_local_link(html: str, search_tags: Union[str, List[str]]) -> \
+        List[Tag]:
+    soup = BeautifulSoup(html, "lxml")
+    found_tags = soup.find_all(search_tags)
+    tags_with_local_link = filter(has_local_link, found_tags)
+    return list(tags_with_local_link)
+
+
+def change_links(html, tags: Union[str, List[str]] = IMG, preffix_dir=''):
     soup = BeautifulSoup(html, "lxml")
     found_tags = soup.find_all(tags)
     tags_with_local_link = filter(has_local_link, found_tags)
@@ -60,20 +68,33 @@ def download(urls, path=os.getcwd, progress=False):
         bar.finish()
 
 
-def get_data(url):
+def get_data(url: str):
     r = requests.get(url)
     r.raise_for_status()
     return r.content
 
 
-def get_link(tag: Tag):
+def get_link(tag: Tag) -> str:
+    """
+    Из обьекта bs4: Tag - возвращает ссылку на ресурс в зав-ти от Тега
+    """
     if tag.name == LINK:
         return tag['href']
     else:
         return tag['src']
 
 
+def has_src_or_href(tag: Tag) -> bool:
+    """
+    Фильтр для функции bs4: find_all()
+    """
+    return tag.has_attr('src') or tag.has_attr('href')
+
+
 def has_local_link(tag: Tag) -> bool:
+    """
+    Фильтр проверяющий что Тег содержит локальную ссылку
+    """
     try:
         link = get_link(tag)
         if link[0] == '/' and link[1] != '/':
