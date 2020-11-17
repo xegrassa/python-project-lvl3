@@ -22,7 +22,9 @@ def find_tags_with_local_link(html: str, search_tags: Union[str, List[str]]) -> 
     return list(tags_with_local_link)
 
 
-def change_links(html, tags: Union[str, List[str]] = IMG, preffix_dir=''):
+def change_links(html: str,
+                 tags: Union[str, List[str]] = IMG,
+                 preffix_dir='') -> dict:
     soup = BeautifulSoup(html, "lxml")
     found_tags = soup.find_all(tags)
     tags_with_local_link = filter(has_local_link, found_tags)
@@ -33,7 +35,8 @@ def change_links(html, tags: Union[str, List[str]] = IMG, preffix_dir=''):
         new_link = os.path.join(preffix_dir,
                                 convert_url_to_name(local_link, ext=True))
         set_link(tag, new_link)
-    return soup.prettify(), local_links
+    return {'html': soup.prettify(),
+            'local_links': local_links}
 
 
 def combine_url_link(pair_url_link: Tuple[str, str]) -> str:
@@ -86,7 +89,7 @@ def get_link(tag: Tag) -> str:
 
 def has_src_or_href(tag: Tag) -> bool:
     """
-    Фильтр для функции bs4: find_all()
+    Фильтр для функции bs4: find_all() что есть любой из атрибутов src или href
     """
     return tag.has_attr('src') or tag.has_attr('href')
 
@@ -105,6 +108,9 @@ def has_local_link(tag: Tag) -> bool:
 
 
 def set_link(tag: Tag, link: str):
+    """
+    Установить в обьект tag в зависимости от тега: атрибут + link
+    """
     if tag.name == LINK:
         tag['href'] = link
     else:
