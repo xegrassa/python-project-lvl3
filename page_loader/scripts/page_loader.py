@@ -9,7 +9,7 @@ from page_loader.network import save_html
 from page_loader.storage import prepare_directory
 
 
-def main():
+def download():
     args = get_args()
     url, output_dir, verbosity_level = args.URL, args.output, args.verbose
     configure_logger(verbosity_level)
@@ -21,11 +21,11 @@ def main():
         logger.critical(e)
         sys.exit(1)
     try:
-        save_html(output_dir, url, verbosity_level)
+        html_path = save_html(output_dir, url, verbosity_level)
     except requests.exceptions.HTTPError as e:
         logger.critical(e)
         sys.exit(1)
-
+    print(html_path)
 
 if __name__ == '__main__':
-    main()
+    download()

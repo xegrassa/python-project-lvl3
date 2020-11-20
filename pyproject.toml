@@ -24,7 +24,7 @@ coverage = "^4.5"
 pytest-cov = "^2.8"
 
 [tool.poetry.scripts]
-page-loader = "page_loader.scripts.page_loader:main"
+page-loader = "page_loader.scripts.page_loader:download"
 
 [build-system]
 requires = ["poetry>=0.12"]

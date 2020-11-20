@@ -1,7 +1,7 @@
 import logging
 import os
-import urllib
-from typing import Tuple, List, Union
+import urllib.parse
+from typing import Tuple, List, Union, Any
 
 import requests
 from bs4 import BeautifulSoup, Tag
@@ -14,38 +14,51 @@ LINK = 'link'
 IMG = 'img'
 
 
-def find_tags_with_local_link(html: str, search_tags: Union[str, List[str]]) -> \
-        List[Tag]:
-    soup = BeautifulSoup(html, "lxml")
-    found_tags = soup.find_all(search_tags)
+def get_download_urls(url: str, tags: List[Tag]) -> List[str]:
+    """
+    Обьединяет url и локальные линки из тегов в ссылки для скачивания
+    Example: url = http://e1.ru
+             link = /img/picture1.png
+             result = http://e1.ru/img/picture1.png
+    """
+    local_links = map(get_link, tags)
+    pairs_url_link = [(url, link) for link in local_links]
+    download_urls = list(map(combine_url_link, pairs_url_link))
+    return download_urls
+
+
+def find_tags_with_local_link(html: BeautifulSoup,
+                              search_tags: Union[str, List[str]]) -> List[Tag]:
+    """
+    В обьекте BS4 ищет теги с локальным линком
+    """
+    found_tags = html.find_all(search_tags)
     tags_with_local_link = filter(has_local_link, found_tags)
     return list(tags_with_local_link)
 
 
-def change_links(html: str,
-                 tags: Union[str, List[str]] = IMG,
-                 preffix_dir='') -> dict:
-    soup = BeautifulSoup(html, "lxml")
-    found_tags = soup.find_all(tags)
-    tags_with_local_link = filter(has_local_link, found_tags)
-    local_links = []
-    for tag in tags_with_local_link:
+def _change_links(tags: List[Tag], preffix_dir=''):
+    """
+    Меняет в обьектах BS4 - Тег значения локальных линков на пути для скачанной страницы
+    """
+    for tag in tags:
         local_link = get_link(tag)
-        local_links.append(local_link)
         new_link = os.path.join(preffix_dir,
                                 convert_url_to_name(local_link, ext=True))
         set_link(tag, new_link)
-    return {'html': soup.prettify(),
-            'local_links': local_links}
 
 
 def combine_url_link(pair_url_link: Tuple[str, str]) -> str:
+    """
+    Example: pair_url_link = (http://e1.ru, /img/picture1.png)
+             result = http://e1.ru/img/picture1.png
+    """
     url = pair_url_link[0]
     link = pair_url_link[1]
     return urllib.parse.urljoin(url, link)
 
 
-def download(urls, path=os.getcwd, progress=False):
+def download(urls, path: Any = os.getcwd, progress=False):
     logger = logging.getLogger('page_loader')
     path = path if isinstance(path, str) else path()
     if progress:
@@ -117,7 +130,7 @@ def set_link(tag: Tag, link: str):
         tag['src'] = link
 
 
-def save_html(output_dir, url, verbosity_level):
+def save_html(output_dir, url, verbosity_level) -> str:
     output_dir = output_dir if isinstance(output_dir, str) else output_dir()
     dir_files_name = convert_url_to_name(url) + '_files'
     html_name = convert_url_to_name(url) + '.html'
@@ -125,15 +138,18 @@ def save_html(output_dir, url, verbosity_level):
     logger = logging.getLogger('page_loader')
     logger.info(f'Download: {url}')
     html = get_data(url)
-    logger.info('Code 200. OK')
-    changed_html, local_links = change_links(html, tags=[SCRIPT, IMG, LINK],
-                                             preffix_dir=dir_files_name)
-    write_to_file(html_path, changed_html)
+    logger.debug('Code 200. OK')
+    soup = BeautifulSoup(html, "lxml")
+    tags_with_local_link = find_tags_with_local_link(html=soup,
+                                                     search_tags=[SCRIPT, IMG,
+                                                                  LINK])
+    urls_for_download = get_download_urls(url, tags_with_local_link)
+    _change_links(tags=tags_with_local_link, preffix_dir=dir_files_name)
+    write_to_file(html_path, soup.prettify())
     logger.info('HTML changed')
-    pairs_url_link = [(url, link) for link in local_links]
-    download_urls = list(map(combine_url_link, pairs_url_link))
     dir_files_path = os.path.join(output_dir, dir_files_name)
     if verbosity_level == 0:
-        download(download_urls, path=dir_files_path, progress=True)
+        download(urls_for_download, path=dir_files_path, progress=True)
     else:
-        download(download_urls, path=dir_files_path)
+        download(urls_for_download, path=dir_files_path)
+    return html_path
