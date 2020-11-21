@@ -42,7 +42,7 @@ jobs:
 
       - name: After script
         env:
-          CC_TEST_REPORTER_ID: ${{ 377f431bc8679f70ddc228cc99dff7617fe06d6ee5906a9bad32b426b4f6072b }}
+          CC_TEST_REPORTER_ID: 377f431bc8679f70ddc228cc99dff7617fe06d6ee5906a9bad32b426b4f6072b
         run: |
           poetry run coverage xml
           ./cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $TRAVIS_TEST_RESULT
