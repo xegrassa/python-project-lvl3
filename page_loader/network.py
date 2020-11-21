@@ -39,7 +39,8 @@ def find_tags_with_local_link(html: BeautifulSoup,
 
 def _change_links(tags: List[Tag], preffix_dir=''):
     """
-    Меняет в обьектах BS4 - Тег значения локальных линков на пути для скачанной страницы
+    Меняет в обьектах BS4 - Тег значения локальных линков
+    на пути для скачанной страницы
     """
     for tag in tags:
         local_link = get_link(tag)
@@ -115,7 +116,7 @@ def has_local_link(tag: Tag) -> bool:
         link = get_link(tag)
         if link[0] == '/' and link[1] != '/':
             return True
-    except:
+    except Exception:
         pass
     return False
 

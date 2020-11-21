@@ -27,5 +27,6 @@ def download():
         sys.exit(1)
     print(html_path)
 
+
 if __name__ == '__main__':
     download()
