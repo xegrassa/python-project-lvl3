@@ -13,3 +13,4 @@ ZZZXXX
 poetry.lock
 TEST.py
 test.html
+coverage.xml
