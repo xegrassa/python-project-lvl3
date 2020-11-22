@@ -20,7 +20,8 @@
                             path to dir for download page
          --verbose, -v         level verbose: -v, -vv, -vvv
 
-   Example: `page-loader -o DIR http://google.com -vvv
+   Example: 
+`page-loader -o DIR http://google.com -vvv
 
 
 [![asciicast](https://asciinema.org/a/321674.svg)](https://asciinema.org/a/321674)
