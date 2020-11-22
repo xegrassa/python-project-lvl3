@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "egrassa-page-loader"
-version = "0.2.0"
+version = "0.5.0"
 description = "Programm for load html page to folder and open page from folder"
 authors = ["egrassa <bacek90@mail.ru>"]
 packages = [
     { include = "page_loader" }
 ]
-repository = "https://github.com/xegrassa/python-project-lvl2"
+repository = "https://github.com/xegrassa/python-project-lvl3"
 
 [tool.poetry.dependencies]
 python = "^3.8"
