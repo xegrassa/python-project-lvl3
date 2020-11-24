@@ -14,3 +14,4 @@ poetry.lock
 TEST.py
 test.html
 coverage.xml
+FUNCTION_TEST.py

@@ -2,6 +2,8 @@ from page_loader.network import has_local_link, get_link, set_link, \
     _change_links, combine_url_link, download, save_html
 from bs4 import BeautifulSoup
 import pytest
+import requests
+import requests_mock
 
 SCRIPT = 'script'
 LINK = 'link'
