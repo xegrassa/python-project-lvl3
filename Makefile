@@ -1,7 +1,3 @@
-publish:
-	poetry build
-	poetry publish -r hexlet
-
 install:
 	poetry install
 

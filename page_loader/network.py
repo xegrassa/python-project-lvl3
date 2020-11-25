@@ -1,61 +1,49 @@
 import logging
 import os
 import urllib.parse
-from typing import Tuple, List, Union, Any
+from typing import Any
 
 import requests
 from bs4 import BeautifulSoup, Tag
 from progress.bar import Bar
 
-from page_loader.storage import convert_url_to_name, write_to_file
+from page_loader.storage import replace_symbols, make_name_from_url, \
+    write_to_file
 
 SCRIPT = 'script'
 LINK = 'link'
 IMG = 'img'
+SEARCH_TAGS = [SCRIPT, LINK, IMG]
 
 
-def get_download_urls(url: str, tags: List[Tag]) -> List[str]:
+def make_download_url(url: str, tag: Tag) -> str:
     """
-    Обьединяет url и локальные линки из тегов в ссылки для скачивания
+    Обьединяет url и локальный линк из тега в ссылку для скачивания
     Example: url = http://e1.ru
              link = /img/picture1.png
              result = http://e1.ru/img/picture1.png
     """
-    local_links = map(get_link, tags)
-    pairs_url_link = [(url, link) for link in local_links]
-    download_urls = list(map(combine_url_link, pairs_url_link))
-    return download_urls
+    local_link = get_link(tag)
+    return combine_url_link(url, local_link)
 
 
-def find_tags_with_local_link(html: BeautifulSoup,
-                              search_tags: Union[str, List[str]]) -> List[Tag]:
-    """
-    В обьекте BS4 ищет теги с локальным линком
-    """
-    found_tags = html.find_all(search_tags)
-    tags_with_local_link = filter(has_local_link, found_tags)
-    return list(tags_with_local_link)
-
-
-def _change_links(tags: List[Tag], preffix_dir=''):
+def change_link(url: str, tag: Tag, preffix_dir=''):
     """
     Меняет в обьектах BS4 - Тег значения локальных линков
     на пути для скачанной страницы
     """
-    for tag in tags:
-        local_link = get_link(tag)
-        new_link = os.path.join(preffix_dir,
-                                convert_url_to_name(local_link, ext=True))
-        set_link(tag, new_link)
+    download_url = make_download_url(url, tag)
+    new_link = os.path.join(preffix_dir,
+                            make_name_from_url(download_url))
+    set_link(tag, new_link)
 
 
-def combine_url_link(pair_url_link: Tuple[str, str]) -> str:
+def combine_url_link(url: str, link: str) -> str:
     """
-    Example: pair_url_link = (http://e1.ru, /img/picture1.png)
+    Example: url = http://e1.ru,
+             link = /img/picture1.png
              result = http://e1.ru/img/picture1.png
     """
-    url = pair_url_link[0]
-    link = pair_url_link[1]
     return urllib.parse.urljoin(url, link)
 
 
@@ -76,9 +64,7 @@ def download(urls, path: Any = os.getcwd, progress=False):
             logger.warning(f'Connection aborted!: {url}')
         else:
             parse_result = urllib.parse.urlparse(url)
-            file_path = os.path.join(path,
-                                     convert_url_to_name(parse_result.path,
-                                                         ext=True))
+            file_path = os.path.join(path, replace_symbols(parse_result.path))
             write_to_file(file_path, data)
             logger.info(f'Url: {url}. Download')
     if progress:
@@ -108,16 +94,16 @@ def has_src_or_href(tag: Tag) -> bool:
     return tag.has_attr('src') or tag.has_attr('href')
 
 
-def has_local_link(tag: Tag) -> bool:
+def is_local_link(base_url: str, link: str) -> bool:
     """
     Фильтр проверяющий что Тег содержит локальную ссылку
     """
-    try:
-        link = get_link(tag)
-        if link[0] == '/' and link[1] != '/':
-            return True
-    except Exception:
-        pass
+    parse_base_url = urllib.parse.urlparse(base_url)
+    parse_link = urllib.parse.urlparse(link)
+    if parse_base_url.netloc == parse_link.netloc:
+        return True
+    if not parse_link.netloc:
+        return True
     return False
 
 
@@ -133,24 +119,33 @@ def set_link(tag: Tag, link: str):
 
 def save_html(output_dir, url, verbosity_level) -> str:
     output_dir = output_dir if isinstance(output_dir, str) else output_dir()
-    dir_files_name = convert_url_to_name(url) + '_files'
-    html_name = convert_url_to_name(url) + '.html'
+    dir_files_name = os.path.splitext(make_name_from_url(url))[0] + '_files'
+    html_name = make_name_from_url(url)
     html_path = os.path.join(output_dir, html_name)
+
     logger = logging.getLogger('page_loader')
     logger.info(f'Download: {url}')
     html = get_data(url)
     logger.debug('Code 200. OK')
     soup = BeautifulSoup(html, "lxml")
-    tags_with_local_link = find_tags_with_local_link(html=soup,
-                                                     search_tags=[SCRIPT, IMG,
-                                                                  LINK])
-    urls_for_download = get_download_urls(url, tags_with_local_link)
-    _change_links(tags=tags_with_local_link, preffix_dir=dir_files_name)
+    searched_tags = soup.find_all(SEARCH_TAGS)
+
+    tags_with_local_link = []
+    for tag in searched_tags:
+        link = get_link(tag)
+        if is_local_link(url, link):
+            tags_with_local_link.append(tag)
+
+    download_urls = []
+    for tag in tags_with_local_link:
+        download_urls.append(make_download_url(url, tag))
+        change_link(url=url, tag=tag, preffix_dir=dir_files_name)
     write_to_file(html_path, soup.prettify())
     logger.info('HTML changed')
+
     dir_files_path = os.path.join(output_dir, dir_files_name)
     if verbosity_level == 0:
-        download(urls_for_download, path=dir_files_path, progress=True)
+        download(download_urls, path=dir_files_path, progress=True)
     else:
-        download(urls_for_download, path=dir_files_path)
+        download(download_urls, path=dir_files_path)
     return html_path

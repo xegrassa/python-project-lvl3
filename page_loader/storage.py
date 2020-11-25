@@ -4,6 +4,24 @@ import re
 import urllib.parse
 
 
+def make_name_from_url(URL: str) -> str:
+    parse_url = urllib.parse.urlsplit(URL)
+    url_without_schema = parse_url.netloc + parse_url.path
+    if not parse_url.path:
+        return replace_symbols(url_without_schema) + '.html'
+    root, ext = os.path.splitext(url_without_schema)
+    file_name = replace_symbols(root)
+    if not ext:
+        ext = '.html'
+    return file_name + ext
+
+
+def replace_symbols(string: str) -> str:
+    parts_file_name = re.findall(r'[^\W]+', string)
+    file_name = '-'.join(parts_file_name)
+    return file_name
+
+
 def convert_url_to_name(URL: str, ext: bool = False) -> str:
     parse_url = urllib.parse.urlsplit(URL)
     url_not_schema = parse_url.netloc + parse_url.path
