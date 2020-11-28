@@ -56,12 +56,10 @@ def test_set_link(tag, expected_result):
 def test_change_links_to_local():
     html = open('tests/fixtures/example_html_1.html').read()
     expect_html = open('tests/fixtures/expect_html_1.html').read()
-    dir = 'ru-hexlet-io-courses_files'
-    url = 'https://ru.hexlet.io'
+    url = 'https://ru.hexlet.io/courses'
     soup = BeautifulSoup(expect_html, 'lxml')
 
     result_html, _ = change_links_to_local(html=html,
                                            base_url=url,
-                                           searched_tags=SEARCH_TAGS,
-                                           preffix_link=dir)
+                                           searched_tags=SEARCH_TAGS)
     assert result_html == soup.prettify()

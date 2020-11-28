@@ -38,15 +38,6 @@ def change_link(url: str, tag: Tag, preffix_dir=''):
     set_link(tag, new_link)
 
 
-# def combine_url_link(url: str, link: str) -> str:
-#     """
-#     Example: url = http://e1.ru,
-#              link = /img/picture1.png
-#              result = http://e1.ru/img/picture1.png
-#     """
-#     return urllib.parse.urljoin(url, link)
-
-
 def download(urls, path: Any = os.getcwd, progress=False):
     logger = logging.getLogger('page_loader')
     path = path if isinstance(path, str) else path()
@@ -87,13 +78,6 @@ def get_link(tag: Tag) -> str:
         return tag['src']
 
 
-# def has_src_or_href(tag: Tag) -> bool:
-#     """
-#     Фильтр для функции bs4: find_all() что есть любой из атрибутов src или href
-#     """
-#     return tag.has_attr('src') or tag.has_attr('href')
-
-
 def is_local_link(base_url: str, link: str) -> bool:
     """
     Фильтр проверяющий что Тег содержит локальную ссылку
@@ -117,11 +101,11 @@ def set_link(tag: Tag, link: str):
         tag['src'] = link
 
 
-def change_links_to_local(html: str,
+def change_links_to_local(html: bytes,
                           base_url: str = '',
-                          searched_tags: Union[List[str], str] = IMG,
-                          preffix_link : str = os.getcwd()) \
-                            -> (str, List[str]):
+                          searched_tags: Union[List[str], str] = IMG) \
+        -> (str, List[str]):
+    preffix_dir = os.path.splitext(make_name_from_url(base_url))[0] + '_files'
     soup = BeautifulSoup(html, "lxml")
     searched_tags = soup.find_all(searched_tags)
     download_urls = []
@@ -129,7 +113,7 @@ def change_links_to_local(html: str,
         link = get_link(tag)
         if is_local_link(base_url, link):
             download_urls.append(make_download_url(base_url, tag))
-            change_link(url=base_url, tag=tag, preffix_dir=preffix_link)
+            change_link(url=base_url, tag=tag, preffix_dir=preffix_dir)
     return soup.prettify(), download_urls
 
 
@@ -138,28 +122,19 @@ def save_html(output_dir, url, verbosity_level) -> str:
     dir_files_name = os.path.splitext(make_name_from_url(url))[0] + '_files'
     html_name = make_name_from_url(url)
     html_path = os.path.join(output_dir, html_name)
+    dir_files_path = os.path.join(output_dir, dir_files_name)
 
     logger = logging.getLogger('page_loader')
     logger.info(f'Download: {url}')
     html = get_data(url)
     logger.debug('Code 200. OK')
-    soup = BeautifulSoup(html, "lxml")
-    searched_tags = soup.find_all(SEARCH_TAGS)
 
-    tags_with_local_link = []
-    for tag in searched_tags:
-        link = get_link(tag)
-        if is_local_link(url, link):
-            tags_with_local_link.append(tag)
-
-    download_urls = []
-    for tag in tags_with_local_link:
-        download_urls.append(make_download_url(url, tag))
-        change_link(url=url, tag=tag, preffix_dir=dir_files_name)
-    write_to_file(html_path, soup.prettify())
+    local_html, download_urls = change_links_to_local(html=html,
+                                                      base_url=url,
+                                                      searched_tags=SEARCH_TAGS)
+    write_to_file(html_path, local_html)
     logger.info('HTML changed')
 
-    dir_files_path = os.path.join(output_dir, dir_files_name)
     if verbosity_level == 0:
         download(download_urls, path=dir_files_path, progress=True)
     else:
