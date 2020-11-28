@@ -3,7 +3,7 @@ import logging
 import requests
 import sys
 
-from page_loader.network import save_html
+from page_loader.network import download_and_save_local_html
 from page_loader.storage import prepare_directory
 
 
@@ -16,7 +16,7 @@ def download(url: str, output_dir: str, verbosity_level=1):
         logger.critical(e)
         sys.exit(1)
     try:
-        html_path = save_html(output_dir, url, verbosity_level)
+        html_path = download_and_save_local_html(output_dir, url, verbosity_level)
     except requests.exceptions.HTTPError as e:
         logger.critical(e)
         sys.exit(1)

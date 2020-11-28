@@ -61,5 +61,5 @@ def test_change_links_to_local():
 
     result_html, _ = change_links_to_local(html=html,
                                            base_url=url,
-                                           searched_tags=SEARCH_TAGS)
+                                           search_tags=SEARCH_TAGS)
     assert result_html == soup.prettify()
