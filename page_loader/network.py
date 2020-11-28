@@ -1,7 +1,7 @@
 import logging
 import os
 import urllib.parse
-from typing import Any
+from typing import Any, List, Union
 
 import requests
 from bs4 import BeautifulSoup, Tag
@@ -24,7 +24,7 @@ def make_download_url(url: str, tag: Tag) -> str:
              result = http://e1.ru/img/picture1.png
     """
     local_link = get_link(tag)
-    return combine_url_link(url, local_link)
+    return urllib.parse.urljoin(url, local_link)
 
 
 def change_link(url: str, tag: Tag, preffix_dir=''):
@@ -38,13 +38,13 @@ def change_link(url: str, tag: Tag, preffix_dir=''):
     set_link(tag, new_link)
 
 
-def combine_url_link(url: str, link: str) -> str:
-    """
-    Example: url = http://e1.ru,
-             link = /img/picture1.png
-             result = http://e1.ru/img/picture1.png
-    """
-    return urllib.parse.urljoin(url, link)
+# def combine_url_link(url: str, link: str) -> str:
+#     """
+#     Example: url = http://e1.ru,
+#              link = /img/picture1.png
+#              result = http://e1.ru/img/picture1.png
+#     """
+#     return urllib.parse.urljoin(url, link)
 
 
 def download(urls, path: Any = os.getcwd, progress=False):
@@ -87,11 +87,11 @@ def get_link(tag: Tag) -> str:
         return tag['src']
 
 
-def has_src_or_href(tag: Tag) -> bool:
-    """
-    Фильтр для функции bs4: find_all() что есть любой из атрибутов src или href
-    """
-    return tag.has_attr('src') or tag.has_attr('href')
+# def has_src_or_href(tag: Tag) -> bool:
+#     """
+#     Фильтр для функции bs4: find_all() что есть любой из атрибутов src или href
+#     """
+#     return tag.has_attr('src') or tag.has_attr('href')
 
 
 def is_local_link(base_url: str, link: str) -> bool:
@@ -115,6 +115,22 @@ def set_link(tag: Tag, link: str):
         tag['href'] = link
     else:
         tag['src'] = link
+
+
+def change_links_to_local(html: str,
+                          base_url: str = '',
+                          searched_tags: Union[List[str], str] = IMG,
+                          preffix_link : str = os.getcwd()) \
+                            -> (str, List[str]):
+    soup = BeautifulSoup(html, "lxml")
+    searched_tags = soup.find_all(searched_tags)
+    download_urls = []
+    for tag in searched_tags:
+        link = get_link(tag)
+        if is_local_link(base_url, link):
+            download_urls.append(make_download_url(base_url, tag))
+            change_link(url=base_url, tag=tag, preffix_dir=preffix_link)
+    return soup.prettify(), download_urls
 
 
 def save_html(output_dir, url, verbosity_level) -> str:

@@ -13,7 +13,7 @@ URLS = ['http://e1.ru',
 
 URL = 'https://ru.hexlet.io/courses'
 MOCK_SITE = open('tests/fixtures/example_html_1.html').read()
-MOCK_EXCEPT_SITE = open('tests/fixtures/except_html_1.html').read()
+MOCK_EXPECT_SITE = open('tests/fixtures/expect_html_1.html').read()
 MOCK_URLS = ['https://ru.hexlet.io/assets/application.css',
              'https://ru.hexlet.io/assets/professions/nodejs.png',
              'https://ru.hexlet.io/packs/js/runtime.js']
@@ -27,5 +27,5 @@ def test_download():
                 m.get(mock_url, text='ссылки для скачивания ')
             path_to_html = download(URL, path_temp_dir)
         with open(path_to_html) as f:
-            soup2 = BeautifulSoup(MOCK_EXCEPT_SITE, 'lxml')
-            assert f.read() == soup2.prettify()
+            soup = BeautifulSoup(MOCK_EXPECT_SITE, 'lxml')
+            assert f.read() == soup.prettify()

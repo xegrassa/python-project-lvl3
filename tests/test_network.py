@@ -1,11 +1,13 @@
 import pytest
 from bs4 import BeautifulSoup
 
-from page_loader.network import is_local_link, get_link, set_link
+from page_loader.network import is_local_link, get_link, set_link, \
+    change_links_to_local
 
 SCRIPT = 'script'
 LINK = 'link'
 IMG = 'img'
+SEARCH_TAGS = [SCRIPT, LINK, IMG]
 URL = 'https://xegrassa.github.io/site/'
 
 TEST_CASE_IS_LOCAL_LINK = \
@@ -49,3 +51,17 @@ def test_set_link(tag, expected_result):
     found_tag = soup.find([SCRIPT, IMG, LINK])
     set_link(found_tag, 'TEST')
     assert str(found_tag) == expected_result
+
+
+def test_change_links_to_local():
+    html = open('tests/fixtures/example_html_1.html').read()
+    expect_html = open('tests/fixtures/expect_html_1.html').read()
+    dir = 'ru-hexlet-io-courses_files'
+    url = 'https://ru.hexlet.io'
+    soup = BeautifulSoup(expect_html, 'lxml')
+
+    result_html, _ = change_links_to_local(html=html,
+                                           base_url=url,
+                                           searched_tags=SEARCH_TAGS,
+                                           preffix_link=dir)
+    assert result_html == soup.prettify()
