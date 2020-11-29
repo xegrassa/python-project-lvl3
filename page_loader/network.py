@@ -16,15 +16,14 @@ IMG = 'img'
 SEARCH_TAGS = [SCRIPT, LINK, IMG]
 
 
-def make_download_url(url: str, tag: Tag) -> str:
+def make_download_url(url: str, link: str) -> str:
     """
     Обьединяет url и локальный линк из тега в ссылку для скачивания
     Example: url = http://e1.ru
              link = /img/picture1.png
              result = http://e1.ru/img/picture1.png
     """
-    local_link = get_link(tag)
-    return urllib.parse.urljoin(url, local_link)
+    return urllib.parse.urljoin(url, link)
 
 
 def change_link(url: str, tag: Tag, preffix_dir: str = '') -> None:
@@ -32,7 +31,7 @@ def change_link(url: str, tag: Tag, preffix_dir: str = '') -> None:
     Меняет в обьектах BS4 - Тег значения локальных линков
     на пути для скачанной страницы
     """
-    download_url = make_download_url(url, tag)
+    download_url = make_download_url(url, get_link(tag))
     new_link = os.path.join(preffix_dir,
                             make_name_from_url(download_url))
     set_link(tag, new_link)
@@ -99,7 +98,7 @@ def change_links_to_local(html: bytes,
     for tag in search_tags:
         link = get_link(tag)
         if is_local_link(base_url, link):
-            download_urls.append(make_download_url(base_url, tag))
+            download_urls.append(make_download_url(base_url, get_link(tag)))
             change_link(url=base_url, tag=tag, preffix_dir=dir_files_name)
     return soup.prettify(), download_urls
 

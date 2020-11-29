@@ -1,8 +1,12 @@
+import os
+from tempfile import TemporaryDirectory
+
 import pytest
+import requests_mock
 from bs4 import BeautifulSoup
 
 from page_loader.network import is_local_link, get_link, set_link, \
-    change_links_to_local
+    change_links_to_local, download_url_content, make_download_url
 
 SCRIPT = 'script'
 LINK = 'link'
@@ -63,3 +67,22 @@ def test_change_links_to_local():
                                            base_url=url,
                                            search_tags=SEARCH_TAGS)
     assert result_html == soup.prettify()
+
+
+def test_download_url_content():
+    url = 'http://e1.ru'
+    with TemporaryDirectory() as temp_dir:
+        with requests_mock.Mocker() as m:
+            m.get(url, text='TEST OK')
+            download_url_content(url, temp_dir)
+            file_name = os.listdir(temp_dir)[0]
+            file_data = open(os.path.join(temp_dir, file_name)).read()
+            assert file_name == 'e1-ru.html'
+            assert file_data == 'TEST OK'
+
+
+def test_make_download_url():
+    url = 'http://e1.ru'
+    link = '/img/picture1.png'
+    result = 'http://e1.ru/img/picture1.png'
+    assert make_download_url(url, link) == result
