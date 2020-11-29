@@ -1,6 +1,6 @@
 import pytest
 
-from page_loader.storage import make_name_from_url
+from page_loader.naming import make_name_from_url
 
 PAIRS_URL_NAME = [('http://e1.ru', 'e1-ru.html'),
                   ('http://avito.ru', 'avito-ru.html'),

@@ -7,8 +7,8 @@ import requests
 from bs4 import BeautifulSoup, Tag
 from progress.bar import Bar
 
-from page_loader.storage import replace_symbols, make_name_from_url, \
-    write_to_file
+from page_loader.naming import make_name_from_url, make_name_for_dir_files
+from page_loader.storage import write_to_file
 
 SCRIPT = 'script'
 LINK = 'link'
@@ -38,10 +38,7 @@ def change_link(url: str, tag: Tag, preffix_dir: str = '') -> None:
     set_link(tag, new_link)
 
 
-
-
-
-def get_data(url: str):
+def get_data(url: str) -> bytes:
     r = requests.get(url)
     r.raise_for_status()
     return r.content
@@ -82,15 +79,6 @@ def set_link(tag: Tag, link: str) -> None:
         tag['src'] = link
 
 
-def make_name_for_dir_files(url: str) -> str:
-    """
-    Из url вернуть имя для директории с файлами
-    Example: http://e1.ru -> e1-ru_files
-    """
-    name = os.path.splitext(make_name_from_url(url))[0] + '_files'
-    return name
-
-
 def change_links_to_local(html: bytes,
                           base_url: str = '',
                           search_tags: Union[List[str], str] = IMG) \
@@ -116,7 +104,8 @@ def change_links_to_local(html: bytes,
     return soup.prettify(), download_urls
 
 
-def download_and_save_local_html(output_dir_path:Any, url:str) -> (str, List[str]):
+def download_and_save_local_html(output_dir_path: Any, url: str) -> (
+        str, List[str]):
     logger = logging.getLogger('page_loader')
     logger.info(f'Download: {url}')
     html = get_data(url)
@@ -154,5 +143,3 @@ def get_data_from_urls(urls, download_dir: str, verbosity):
             logger.info(f'Url: {url}. Download')
     if verbosity:
         bar.finish()
-
-
