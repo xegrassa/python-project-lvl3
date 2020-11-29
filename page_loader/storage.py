@@ -4,7 +4,7 @@ import os
 from page_loader.naming import make_name_for_dir_files
 
 
-def check_dir(path):
+def check_dir(path: str) -> None:
     """
     Проверка что нужная директория существует и есть права на запись
     """
@@ -14,7 +14,7 @@ def check_dir(path):
         raise OSError(f'Directory {path} not access to Write!')
 
 
-def create_dir_files(path):
+def create_dir_files(path: str) -> None:
     """
     Создание директории под скачанные файлы, проверка что директория пустая
     """
@@ -37,9 +37,11 @@ def write_to_file(path, data):
             file.write(data)
 
 
-def prepare_directory(path_dir, url):
+def prepare_directory(path: str, url: str) -> None:
+    """
+    Проверка и создание нужных директорий
+    """
     logger = logging.getLogger('page_loader')
-    path = path_dir if isinstance(path_dir, str) else path_dir()
     check_dir(path)
     logger.info(f'Directory "{path}" - exist')
     create_dir_files(os.path.join(path, make_name_for_dir_files(url)))
