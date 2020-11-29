@@ -1,7 +1,7 @@
 import pytest
 
-from page_loader.naming import make_name_from_url, replace_symbols, \
-    make_name_for_dir_files
+from page_loader.naming import (make_name_for_dir_files, make_name_from_url,
+                                replace_symbols)
 
 FIXTURE_NAME_FROM_URL = [('http://e1.ru', 'e1-ru.html'),
                          ('http://avito.ru', 'avito-ru.html'),

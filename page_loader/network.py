@@ -7,7 +7,7 @@ import requests
 from bs4 import BeautifulSoup, Tag
 from progress.bar import Bar
 
-from page_loader.naming import make_name_from_url, make_name_for_dir_files
+from page_loader.naming import make_name_for_dir_files, make_name_from_url
 from page_loader.storage import write_to_file
 
 SCRIPT = 'script'

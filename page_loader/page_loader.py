@@ -1,13 +1,13 @@
 import logging
 import os.path
+import sys
 from typing import Any
 
 import requests
-import sys
 
 from page_loader.naming import make_name_for_dir_files
-from page_loader.network import download_and_save_local_html, \
-    download_from_urls
+from page_loader.network import (download_and_save_local_html,
+                                 download_from_urls)
 from page_loader.storage import prepare_directory
 
 

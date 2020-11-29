@@ -5,8 +5,9 @@ import pytest
 import requests_mock
 from bs4 import BeautifulSoup
 
-from page_loader.network import is_local_link, get_link, set_link, \
-    change_links_to_local, download_url_content, make_download_url
+from page_loader.network import (change_links_to_local, download_url_content,
+                                 get_link, is_local_link, make_download_url,
+                                 set_link)
 
 SCRIPT = 'script'
 LINK = 'link'
