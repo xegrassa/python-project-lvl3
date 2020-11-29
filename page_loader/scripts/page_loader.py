@@ -7,4 +7,4 @@ if __name__ == '__main__':
     url, output_dir, verbosity_level = args.URL, args.output, args.verbose
     configure_logger(verbosity_level)
     path_to_html = download(url, output_dir)
-    print(path_to_html)
+    print(f'Page was successfully downloaded into "{path_to_html}"')

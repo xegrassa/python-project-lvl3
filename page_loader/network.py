@@ -116,7 +116,7 @@ def change_links_to_local(html: bytes,
     return soup.prettify(), download_urls
 
 
-def download_and_save_local_html(output_dir_path, url, verbosity_level) -> str:
+def download_and_save_local_html(output_dir_path:Any, url:str) -> (str, List[str]):
     logger = logging.getLogger('page_loader')
     logger.info(f'Download: {url}')
     html = get_data(url)
@@ -125,29 +125,21 @@ def download_and_save_local_html(output_dir_path, url, verbosity_level) -> str:
     output_dir_path = output_dir_path if isinstance(output_dir_path,
                                                     str) else output_dir_path()
     html_path = os.path.join(output_dir_path, make_name_from_url(url))
-    dir_files_path = os.path.join(output_dir_path,
-                                  make_name_for_dir_files(url))
 
     local_html, download_urls = change_links_to_local(html=html,
                                                       base_url=url,
                                                       search_tags=SEARCH_TAGS)
     write_to_file(html_path, local_html)
     logger.info('HTML changed')
-
-    if verbosity_level == 0:
-        download(download_urls, path=dir_files_path, progress=True)
-    else:
-        download(download_urls, path=dir_files_path)
-    return html_path
+    return html_path, download_urls
 
 
-def download(urls, path: Any = os.getcwd, progress=False):
+def get_data_from_urls(urls, download_dir: str, verbosity):
     logger = logging.getLogger('page_loader')
-    path = path if isinstance(path, str) else path()
-    if progress:
+    if verbosity:
         bar = Bar('Processing', max=len(urls))
     for url in urls:
-        if progress:
+        if verbosity:
             bar.suffix = '%(index)d/%(max)d ' + url
             bar.next()
         try:
@@ -157,9 +149,10 @@ def download(urls, path: Any = os.getcwd, progress=False):
         except requests.exceptions.ConnectionError:
             logger.warning(f'Connection aborted!: {url}')
         else:
-            parse_result = urllib.parse.urlparse(url)
-            file_path = os.path.join(path, replace_symbols(parse_result.path))
+            file_path = os.path.join(download_dir, make_name_from_url(url))
             write_to_file(file_path, data)
             logger.info(f'Url: {url}. Download')
-    if progress:
+    if verbosity:
         bar.finish()
+
+
