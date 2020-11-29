@@ -1,7 +1,7 @@
 import logging
 import os
 import urllib.parse
-from typing import Any, List, Union
+from typing import List, Union
 
 import requests
 from bs4 import BeautifulSoup, Tag
@@ -104,17 +104,17 @@ def change_links_to_local(html: bytes,
     return soup.prettify(), download_urls
 
 
-def download_and_save_local_html(output_dir_path: Any, url: str) -> (
+def download_and_save_local_html(output_dir_path: str, url: str) -> (
         str, List[str]):
+    """
+    Скачивает html и меняет в нем локальные линки. Возвращает url ресурсов
+    на которые вели измененные линки
+    """
     logger = logging.getLogger('page_loader')
     logger.info(f'Download: {url}')
     html = get_data(url)
     logger.debug('Code 200. OK')
-
-    output_dir_path = output_dir_path if isinstance(output_dir_path,
-                                                    str) else output_dir_path()
     html_path = os.path.join(output_dir_path, make_name_from_url(url))
-
     local_html, download_urls = change_links_to_local(html=html,
                                                       base_url=url,
                                                       search_tags=SEARCH_TAGS)
@@ -123,23 +123,35 @@ def download_and_save_local_html(output_dir_path: Any, url: str) -> (
     return html_path, download_urls
 
 
-def get_data_from_urls(urls, download_dir: str, verbosity):
-    logger = logging.getLogger('page_loader')
+def download_from_urls(urls, download_dir: str, verbosity):
+    """
+    При отсутствии verbosity выводит кол-во и что скачивает как Прогресс бар
+    """
     if verbosity:
-        bar = Bar('Processing', max=len(urls))
+        for url in urls:
+            download_url_content(url=url, download_dir=download_dir)
+        return None
+    bar = Bar('Processing', max=len(urls))
     for url in urls:
-        if verbosity:
-            bar.suffix = '%(index)d/%(max)d ' + url
-            bar.next()
-        try:
-            data = get_data(url)
-        except requests.exceptions.HTTPError:
-            logger.warning(f'Client Error: Not Found for url: {url}')
-        except requests.exceptions.ConnectionError:
-            logger.warning(f'Connection aborted!: {url}')
-        else:
-            file_path = os.path.join(download_dir, make_name_from_url(url))
-            write_to_file(file_path, data)
-            logger.info(f'Url: {url}. Download')
-    if verbosity:
-        bar.finish()
+        bar.suffix = '%(index)d/%(max)d ' + url
+        bar.next()
+        download_url_content(url=url, download_dir=download_dir)
+    bar.finish()
+
+
+def download_url_content(url: str, download_dir: str) -> None:
+    """
+    Скачивает и сохраняет данные из url
+    """
+    logger = logging.getLogger('page_loader')
+    file_path = os.path.join(download_dir, make_name_from_url(url))
+    try:
+        data = get_data(url)
+    except requests.exceptions.HTTPError:
+        logger.warning(f'Client Error: Not Found for url: {url}')
+    except requests.exceptions.ConnectionError:
+        logger.warning(f'Connection aborted!: {url}')
+    else:
+        logger.info(f'Url: {url}. Download')
+        write_to_file(file_path, data)
+        logger.info(f'Data from: {url}. Save to {file_path}')
