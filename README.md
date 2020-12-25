@@ -23,4 +23,4 @@
 `page-loader -o DIR http://google.com -vvv`
 
 ### How it's work asciinema
-[![asciicast](https://asciinema.org/a/321674.svg)](https://asciinema.org/a/321674)
+[![asciicast](https://asciinema.org/a/381145.svg)](https://asciinema.org/a/381145)
