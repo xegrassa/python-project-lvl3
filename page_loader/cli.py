@@ -3,7 +3,8 @@ import os
 
 
 def get_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(usage='page-loader [options] <url>',
+                                     description='some description')
     parser.add_argument('url',
                         type=str,
                         help='URL')
