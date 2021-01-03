@@ -48,9 +48,9 @@ def get_link(tag: Tag) -> str:
     Из обьекта bs4: Tag - возвращает ссылку на ресурс в зав-ти от Тега
     """
     if tag.name == LINK:
-        return tag['href']
+        return tag.get('href', '')
     else:
-        return tag['src']
+        return tag.get('src', '')
 
 
 def is_local_link(base_url: str, link: str) -> bool:
@@ -97,6 +97,8 @@ def change_links_to_local(html: bytes,
     download_urls = []
     for tag in search_tags:
         link = get_link(tag)
+        if not link:
+            continue
         if is_local_link(base_url, link):
             download_urls.append(make_download_url(base_url, get_link(tag)))
             change_link(url=base_url, tag=tag, preffix_dir=dir_files_name)
