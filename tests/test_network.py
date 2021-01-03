@@ -24,18 +24,6 @@ TEST_CASE_IS_LOCAL_LINK = \
      ('http://e1.ru/test', 'http://e1.ru/asset', True),
      ('http://e1.ru/test', '//path/picture.img', False)]
 
-TEST_CASE_GET_LINK = \
-    [('<img src="/site/img1.png">', '/site/img1.png'),
-     ('<link href="/site/text1.txt">', '/site/text1.txt'),
-     ('<img src="https://test/images">', 'https://test/images'),
-     ('<img src="">', '')]
-
-TEST_CASE_SET_LINK = \
-    [('<img>', '<img src="TEST"/>'),
-     ('<link href="">', '<link href="TEST"/>'),
-     ('<img src="https://test/images">', '<img src="TEST"/>'),
-     ('<img src="">', '<img src="TEST"/>')]
-
 
 @pytest.mark.parametrize(('base_url', 'link', 'expected_result'),
                          TEST_CASE_IS_LOCAL_LINK)
@@ -43,11 +31,25 @@ def test_is_local_link(base_url, link, expected_result):
     assert is_local_link(base_url, link) == expected_result
 
 
+TEST_CASE_GET_LINK = \
+    [('<img src="/site/img1.png">', '/site/img1.png'),
+     ('<link href="/site/text1.txt">', '/site/text1.txt'),
+     ('<img src="https://test/images">', 'https://test/images'),
+     ('<img src="">', '')]
+
+
 @pytest.mark.parametrize(('tag', 'expected_result'), TEST_CASE_GET_LINK)
 def test_get_link(tag, expected_result):
     soup = BeautifulSoup(tag, 'lxml')
     found_tag = soup.find([SCRIPT, IMG, LINK])
     assert get_link(found_tag) == expected_result
+
+
+TEST_CASE_SET_LINK = \
+    [('<img>', '<img src="TEST"/>'),
+     ('<link href="">', '<link href="TEST"/>'),
+     ('<img src="https://test/images">', '<img src="TEST"/>'),
+     ('<img src="">', '<img src="TEST"/>')]
 
 
 @pytest.mark.parametrize(('tag', 'expected_result'), TEST_CASE_SET_LINK)

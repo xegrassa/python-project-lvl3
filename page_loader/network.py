@@ -7,7 +7,7 @@ import requests
 from bs4 import BeautifulSoup, Tag
 from progress.bar import Bar
 
-from page_loader.naming import make_name_for_dir_files, make_name_from_url
+from page_loader.naming import url_to_dir_files, url_to_file_name
 from page_loader.storage import write_to_file
 
 SCRIPT = 'script'
@@ -33,7 +33,7 @@ def change_link(url: str, tag: Tag, preffix_dir: str = '') -> None:
     """
     download_url = make_download_url(url, get_link(tag))
     new_link = os.path.join(preffix_dir,
-                            make_name_from_url(download_url))
+                            url_to_file_name(download_url))
     set_link(tag, new_link)
 
 
@@ -91,7 +91,7 @@ def change_links_to_local(html: bytes,
         полный url ""http://***/courses
         - searched_tags теги в которых ищем локальные ссылки
     """
-    dir_files_name = make_name_for_dir_files(base_url)
+    dir_files_name = url_to_dir_files(base_url)
     soup = BeautifulSoup(html, "lxml")
     search_tags = soup.find_all(search_tags)
     download_urls = []
@@ -115,7 +115,7 @@ def download_and_save_local_html(output_dir_path: str, url: str) -> (
     logger.info(f'Download: {url}')
     html = get_data(url)
     logger.debug('Code 200. OK')
-    html_path = os.path.join(output_dir_path, make_name_from_url(url))
+    html_path = os.path.join(output_dir_path, url_to_file_name(url))
     local_html, download_urls = change_links_to_local(html=html,
                                                       base_url=url,
                                                       search_tags=SEARCH_TAGS)
@@ -145,7 +145,7 @@ def download_url_content(url: str, download_dir: str) -> None:
     Скачивает и сохраняет данные из url
     """
     logger = logging.getLogger('page_loader')
-    file_path = os.path.join(download_dir, make_name_from_url(url))
+    file_path = os.path.join(download_dir, url_to_file_name(url))
     try:
         data = get_data(url)
     except requests.exceptions.HTTPError:

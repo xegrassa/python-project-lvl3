@@ -3,7 +3,7 @@ import re
 import urllib.parse
 
 
-def make_name_from_url(url: str) -> str:
+def url_to_file_name(url: str) -> str:
     """
     Из url учитывая тип файла сделать имя
     Example: http://e1.ru -> e1-ru.html
@@ -29,10 +29,10 @@ def replace_symbols(string: str) -> str:
     return file_name
 
 
-def make_name_for_dir_files(url: str) -> str:
+def url_to_dir_files(url: str) -> str:
     """
     Из url сделать имя для директории с файлами
     Example: http://e1.ru -> e1-ru_files
     """
-    name = os.path.splitext(make_name_from_url(url))[0] + '_files'
+    name = os.path.splitext(url_to_file_name(url))[0] + '_files'
     return name

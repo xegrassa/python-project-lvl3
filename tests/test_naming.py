@@ -9,7 +9,7 @@ from page_loader import naming
     ('https://hex.io/courses', 'hex-io-courses.html')
 ])
 def test_make_name_from_url(url, expected_name):
-    assert naming.make_name_from_url(url) == expected_name
+    assert naming.url_to_file_name(url) == expected_name
 
 
 @pytest.mark.parametrize('url, expected_name', [
@@ -18,7 +18,7 @@ def test_make_name_from_url(url, expected_name):
     ('https://hex.io/course', 'hex-io-course_files')
 ])
 def test_make_name_for_dir_files(url, expected_name):
-    assert naming.make_name_for_dir_files(url) == expected_name
+    assert naming.url_to_dir_files(url) == expected_name
 
 
 @pytest.mark.parametrize('url, expected_name', [

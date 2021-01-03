@@ -3,7 +3,7 @@ from tempfile import TemporaryDirectory
 import requests_mock
 from bs4 import BeautifulSoup
 
-from page_loader.scripts.page_loader import download
+from page_loader import core
 
 SITES = [('hexlet.io/courses', 'hexlet-io-courses'),
          ('e1.ru', 'e1-ru')]
@@ -25,7 +25,7 @@ def test_download():
             m.get(URL, text=MOCK_SITE)
             for mock_url in MOCK_URLS:
                 m.get(mock_url, text='ссылки для скачивания ')
-            path_to_html = download(URL, path_temp_dir)
+            path_to_html = core.download(URL, path_temp_dir)
         with open(path_to_html) as f:
             soup = BeautifulSoup(MOCK_EXPECT_SITE, 'lxml')
             assert f.read() == soup.prettify()

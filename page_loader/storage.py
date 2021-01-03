@@ -1,7 +1,7 @@
 import logging
 import os
 
-from page_loader.naming import make_name_for_dir_files
+from page_loader.naming import url_to_dir_files
 
 
 def check_dir(path: str) -> None:
@@ -44,4 +44,4 @@ def prepare_directory(path: str, url: str) -> None:
     logger = logging.getLogger('page_loader')
     check_dir(path)
     logger.info(f'Directory "{path}" - exist')
-    create_dir_files(os.path.join(path, make_name_for_dir_files(url)))
+    create_dir_files(os.path.join(path, url_to_dir_files(url)))
