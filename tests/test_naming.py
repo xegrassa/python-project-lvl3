@@ -1,7 +1,6 @@
 import pytest
 
-from page_loader.naming import (make_name_for_dir_files, make_name_from_url,
-                                replace_symbols)
+from page_loader import naming
 
 
 @pytest.mark.parametrize('url, expected_name', [
@@ -10,7 +9,7 @@ from page_loader.naming import (make_name_for_dir_files, make_name_from_url,
     ('https://hex.io/courses', 'hex-io-courses.html')
 ])
 def test_make_name_from_url(url, expected_name):
-    assert make_name_from_url(url) == expected_name
+    assert naming.make_name_from_url(url) == expected_name
 
 
 @pytest.mark.parametrize('url, expected_name', [
@@ -19,7 +18,7 @@ def test_make_name_from_url(url, expected_name):
     ('https://hex.io/course', 'hex-io-course_files')
 ])
 def test_make_name_for_dir_files(url, expected_name):
-    assert make_name_for_dir_files(url) == expected_name
+    assert naming.make_name_for_dir_files(url) == expected_name
 
 
 @pytest.mark.parametrize('url, expected_name', [
@@ -29,4 +28,4 @@ def test_make_name_for_dir_files(url, expected_name):
     ('hex.io/image.png', 'hex-io-image-png')
 ])
 def test_replace_symbols(url, expected_name):
-    assert replace_symbols(url) == expected_name
+    assert naming.replace_symbols(url) == expected_name
